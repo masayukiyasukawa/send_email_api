@@ -1,4 +1,9 @@
 class UsersController < ApplicationController
+  require 'net/https'
+  require 'uri'
+  require 'json'
+  require 'cgi'
+  require 'base64'
 
   def new
     @user = User.new
@@ -19,11 +24,14 @@ class UsersController < ApplicationController
       req = Net::HTTP::Post.new(uri.request_uri)
       req["Content-Type"] = "application/json"
       req["X-API-KEY"] = 'wFRndCxe2ido3kcCvUQa8OFw0W5wfEf7UJRZ1Rfb'
+
+      image = Base64.encode64(@user.attachments)
       data = {
           "dest":@user.dest,
           "subject":@user.subject,
           "body":@user.body,
-          "attachments":@user.attachments
+          "attachments":image
+          # "attachments":@user.attachments
       }.to_json
     
       req.body = data
