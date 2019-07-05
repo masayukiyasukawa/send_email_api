@@ -18,13 +18,10 @@ class UsersController < ApplicationController
       http = Net::HTTP.new(uri.host, uri.port)
     
       http.use_ssl = true
-      # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     
       req = Net::HTTP::Post.new(uri.request_uri)
-      # req["Content-Type"] = "multipart/form-data"
       req["X-API-KEY"] = 'wFRndCxe2ido3kcCvUQa8OFw0W5wfEf7UJRZ1Rfb'
 
-      # binding.pry
       attachments = user_params[:attachments]
       up_load = {}
       if attachments != nil
@@ -33,7 +30,7 @@ class UsersController < ApplicationController
         up_load[:attachments_name] = attachments.original_filename
       end
 
-      image = Base64.strict_encode64(up_load[:attachments])
+      encode = Base64.strict_encode64(up_load[:attachments])
       data = {
           "dest": @user.dest,
           "subject": @user.subject,
@@ -42,7 +39,7 @@ class UsersController < ApplicationController
             [
               [
                 up_load[:attachments_name],
-                "data:#{up_load[:attachments_type]};base64,#{image}"
+                "data:#{up_load[:attachments_type]};base64,#{encode}"
               ]
             ]
       }.to_json
@@ -51,7 +48,6 @@ class UsersController < ApplicationController
 
       req.body = data
       res = http.request(req)
-      p res.body
       render json: @data
     else
       render :action => "new"
