@@ -1,8 +1,4 @@
 class UsersController < ApplicationController
-  require 'net/https'
-  require 'uri'
-  require 'json'
-  require 'base64'
 
   def new
     @user = User.new
