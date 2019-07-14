@@ -8,12 +8,6 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     
     if @user.save
-
-      # @user_params[:attachments] = user_params[:attachments]
-      # @user.send_email
-      # binding.pry
-
-      
       attachments = user_params[:attachments]
       up_load = {}
       if attachments != nil
@@ -35,19 +29,17 @@ class UsersController < ApplicationController
           ]
         ]
       }.to_json
-      
-      base_url = 'https://hlw9zpstkf.execute-api.ap-northeast-1.amazonaws.com/production/submit'
-  
-      uri = URI.parse(base_url)
+
+      uri = @user.parse_uri
+
       http = Net::HTTP.new(uri.host, uri.port)
-    
       http.use_ssl = true
     
       req = Net::HTTP::Post.new(uri.request_uri)
       req["X-API-KEY"] = 'wFRndCxe2ido3kcCvUQa8OFw0W5wfEf7UJRZ1Rfb'
       req.body = data
-      http.request(req)
-      render json: data
+      res = http.request(req)
+      render json: res
     else
       render :action => "new"
     end
